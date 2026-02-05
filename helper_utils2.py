@@ -7,7 +7,6 @@ from matplotlib.ticker import MaxNLocator
 from PIL import Image
 
 
-
 def display_image(image, label, title, num_ticks=6, show_values=True):
     """
     Displays an image with its corresponding label and title.
@@ -60,7 +59,7 @@ def display_image(image, label, title, num_ticks=6, show_values=True):
         threshold = (vmin_val + vmax_val) / 2.0
         # Get the dimensions of the image.
         height, width = image_data.shape
-        
+
         # Iterate over each pixel to display its value.
         for y in range(height):
             for x in range(width):
@@ -68,12 +67,13 @@ def display_image(image, label, title, num_ticks=6, show_values=True):
                 value = image_data[y, x]
                 # Set text color based on the pixel's brightness.
                 text_color = "white" if value < threshold else "black"
-                
+
                 # Format the text to display, handling integers and floats differently.
-                text_to_display = f"{value:.0f}" if isinstance(value, np.integer) else f"{value:.1f}"
-                
+                text_to_display = f"{value:.0f}" if isinstance(
+                    value, np.integer) else f"{value:.1f}"
+
                 # Add the pixel value as text to the plot.
-                plt.text(x, y, text_to_display, 
+                plt.text(x, y, text_to_display,
                          ha="center", va="center", color=text_color, fontsize=6)
 
     # Add a grid to the plot.
@@ -82,7 +82,7 @@ def display_image(image, label, title, num_ticks=6, show_values=True):
     plt.xticks(np.arange(0, 28, 4))
     # Set the y-axis ticks.
     plt.yticks(np.arange(0, 28, 4))
-    
+
     # Add a color bar to the plot.
     cbar = plt.colorbar()
     # Create evenly spaced ticks for the color bar.
@@ -94,9 +94,8 @@ def display_image(image, label, title, num_ticks=6, show_values=True):
 
     # Show the final plot.
     plt.show()
-    
-    
-    
+
+
 def display_predictions(model, test_loader, device):
     """
     Displays a grid of predictions for one random sample from each class.
@@ -112,16 +111,18 @@ def display_predictions(model, test_loader, device):
 
     # Creates a dictionary to store indices for each class.
     class_indices = {i: [] for i in range(10)}
-    
+
     # Populates the dictionary with the indices of all samples for each class.
     for idx, (_, label) in enumerate(test_loader.dataset):
         class_indices[label].append(idx)
-        
+
     # Selects one random index from the list of indices for each class.
-    random_indices = [random.choice(indices) for indices in class_indices.values()]
-    
+    random_indices = [random.choice(indices)
+                      for indices in class_indices.values()]
+
     # Retrieves the images and corresponding labels using the randomly selected indices.
-    sample_images = torch.stack([test_loader.dataset[i][0] for i in random_indices])
+    sample_images = torch.stack([test_loader.dataset[i][0]
+                                for i in random_indices])
     sample_labels = [test_loader.dataset[i][1] for i in random_indices]
 
     # Temporarily disables gradient calculation for inference.
@@ -145,25 +146,25 @@ def display_predictions(model, test_loader, device):
 
         # Displays the image on the current subplot.
         ax.imshow(image, cmap='gray')
-        
+
         # Sets the title of the subplot, with color indicating if the prediction is correct.
         title_color = 'green' if true_label == predicted_label else 'red'
-        ax.set_title(f"True: {true_label}\nPred: {predicted_label}", color=title_color)
-        
+        ax.set_title(
+            f"True: {true_label}\nPred: {predicted_label}", color=title_color)
+
         # Hides the axes for a cleaner visual.
         ax.axis('off')
 
     # Adjusts the layout to prevent titles and labels from overlapping.
     plt.tight_layout(rect=[0, 0, 1, 0.96])
-    
+
     # Adjusts the vertical spacing between subplots.
     plt.subplots_adjust(hspace=0.3)
-    
+
     # Displays the plot.
     plt.show()
-    
-    
-    
+
+
 def plot_metrics(train_loss, test_acc):
     """
     Displays side-by-side plots for training loss and test accuracy over epochs.
